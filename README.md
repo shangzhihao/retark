@@ -34,8 +34,10 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
 ## Disclaimer
 
-This project is for research purposes only. The generated content may not reflect real-world logic or common sense, and is intended purely for entertainment and academic study of internet culture and language models.
+- This project is for research purposes only.
+- The generated content may not reflect real-world logic or common sense, and is intended purely for entertainment and academic study of internet culture and language models.
 
 ## License
 
 MIT License
+
