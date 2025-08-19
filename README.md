@@ -1,0 +1,41 @@
+# Ruozhiba-Style LLM Fine-tuning
+
+## Overview
+Retark means retard talk. It is a project to fine-tune a large language model (LLM) using the Ruozhiba dataset to make the model adopt the distinctive tone and style of Ruozhiba (弱智吧, retard-bar), a popular Chinese internet forum known for its humorous, absurd, and often intentionally nonsensical content.
+
+## Dataset
+
+The Ruozhiba dataset contains posts and replies collected from the Ruozhiba forum. The content is characterized by:
+
+- Intentionally illogical or absurd questions and statements
+- Humorous and satirical tone
+- Creative misuse of logic and common sense
+- Internet slang and meme culture references
+- Deliberate "low intelligence" expressions for comedic effect
+
+The datasets used in this project are from the following repositories: [Better-Ruozhiba](https://github.com/FunnySaltyFish/Better-Ruozhiba), [ruozhiba](https://github.com/Leymore/ruozhiba). 
+
+## Usage
+
+After training, the model can generate text in the distinctive Ruozhiba style:
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_name = "ruozhi"
+model = AutoModelForCausalLM.from_pretrained(moel_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+input_text = "为什么"
+inputs = tokenizer(input_text, return_tensors="pt")
+outputs = model.generate(**inputs, max_length=100)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+```
+
+## Disclaimer
+
+This project is for research purposes only. The generated content may not reflect real-world logic or common sense, and is intended purely for entertainment and academic study of internet culture and language models.
+
+## License
+
+MIT License
