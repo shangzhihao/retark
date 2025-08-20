@@ -1,17 +1,57 @@
 [project]
 name = "retark"
 version = "0.1.0"
-description = "Add your description here"
+description = "a fine-tune llm talking like ruozhiba"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "datasets>=4.0.0",
     "peft>=0.17.0",
+    "torch>=2.8.0",
     "transformers>=4.55.2",
     "trl>=0.21.0",
 ]
 
 [dependency-groups]
 dev = [
+    "mypy>=1.17.1",
     "pyright>=1.1.403",
+    "pytest>=8.4.1",
+    "ruff>=0.12.9",
 ]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["retark*"]
+
+[project.scripts]
+retark = "retark.main:main"
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["test_*.py", "*_test.py"]
+
+[tool.mypy]
+packages = ["retark"]
+# stricter settings
+check_untyped_defs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unreachable = true
+strict_optional = true
+# allow missing type hints in 3rd-party libs
+ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+lint.select = ["E", "F", "I", "UP", "B"]
