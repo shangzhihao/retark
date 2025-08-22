@@ -15,23 +15,6 @@ The Ruozhiba dataset contains posts and replies collected from the Ruozhiba foru
 
 The datasets used in this project are from the following repositories: [Better-Ruozhiba](https://github.com/FunnySaltyFish/Better-Ruozhiba), [ruozhiba](https://github.com/Leymore/ruozhiba). 
 
-## Usage
-
-After training, the model can generate text in the distinctive Ruozhiba style:
-
-```python
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
-model_name = "ruozhi"
-model = AutoModelForCausalLM.from_pretrained(moel_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-input_text = "为什么"
-inputs = tokenizer(input_text, return_tensors="pt")
-outputs = model.generate(**inputs, max_length=100)
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))
-```
-
 ## Disclaimer
 
 - This project is for research purposes only.
