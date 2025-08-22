@@ -1,21 +1,14 @@
-from peft import LoraConfig
-from transformers import AutoTokenizer
+from peft import LoraConfig, get_peft_model
+from transformers import PreTrainedModel
 from trl import SFTConfig, SFTTrainer
+from datasets import Dataset
+from .config import LORA_R
 
-from .data_utils import get_chat_ds
-
-
-def sft(model, model_name):
-    chat_data = get_chat_ds()
-    tokenizer = AutoTokenizer.from_pretrained(model_name, use_fast=True)
-
-    if tokenizer.eos_token is None:
-        tokenizer.add_special_tokens({"eos_token": "<|endoftext|>"})
-        model.resize_token_embeddings(len(tokenizer))
+def sft(model: PreTrainedModel, chat_data: Dataset):
 
     peft_config = LoraConfig(
-        r=16,
-        lora_alpha=32,
+        r=LORA_R,
+        lora_alpha=LORA_R*2,
         lora_dropout=0.05,
         bias="none",
         task_type="CAUSAL_LM",
@@ -29,9 +22,10 @@ def sft(model, model_name):
             "down_proj",
         ],
     )
-
+    # peft_model = get_peft_model(model, peft_config)
+    peft_model = model
     train_cfg = SFTConfig(
-        output_dir="./sft-qwen2.5-lora-chat-mps",
+        output_dir="./sft-qwen2.5-lora-chat",
         num_train_epochs=10,
         per_device_train_batch_size=1,
         gradient_accumulation_steps=8,
@@ -48,10 +42,10 @@ def sft(model, model_name):
     )
 
     trainer = SFTTrainer(
-        model=model,
-        peft_config=peft_config,
+        model=peft_model,
         train_dataset=chat_data,
         args=train_cfg,
     )
 
     trainer.train()
+    return trainer

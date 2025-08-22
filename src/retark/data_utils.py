@@ -4,9 +4,11 @@ import re
 from datasets import Dataset
 from transformers import AutoTokenizer
 
-from .config import BLOCK_SIZE, CHAT_FILE, DATA_DIR, MODEL_NAME, TEXT_FILE
+from .config import (BLOCK_SIZE, CHAT_FILE, DATA_DIR, HF_TOKEN, MODEL_NAME,
+                     TEXT_FILE)
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
+tokenizer = AutoTokenizer.from_pretrained(
+    MODEL_NAME, use_fast=True, token=HF_TOKEN)
 
 
 def chat_to_msg(chat: dict[str, str]) -> dict[str, list]:
