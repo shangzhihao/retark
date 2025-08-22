@@ -1,4 +1,3 @@
-from peft import LoraConfig, get_peft_model
 from transformers import PreTrainedModel
 from trl import SFTConfig, SFTTrainer
 from datasets import Dataset
@@ -6,23 +5,6 @@ from .config import LORA_R
 
 def sft(model: PreTrainedModel, chat_data: Dataset):
 
-    peft_config = LoraConfig(
-        r=LORA_R,
-        lora_alpha=LORA_R*2,
-        lora_dropout=0.05,
-        bias="none",
-        task_type="CAUSAL_LM",
-        target_modules=[
-            "q_proj",
-            "k_proj",
-            "v_proj",
-            "o_proj",
-            "gate_proj",
-            "up_proj",
-            "down_proj",
-        ],
-    )
-    # peft_model = get_peft_model(model, peft_config)
     peft_model = model
     train_cfg = SFTConfig(
         output_dir="./sft-qwen2.5-lora-chat",
