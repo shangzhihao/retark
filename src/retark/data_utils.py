@@ -1,13 +1,12 @@
 import json
 import re
-from pathlib import Path
 
 from datasets import Dataset
+from transformers import AutoTokenizer
 
-from .config import CHAT_FILE, TEXT_FILE
+from .config import BLOCK_SIZE, CHAT_FILE, DATA_DIR, MODEL_NAME, TEXT_FILE
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DATA_DIR = PROJECT_ROOT / "data"
+tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME, use_fast=True)
 
 
 def chat_to_msg(chat: dict[str, str]) -> dict[str, list]:
@@ -29,15 +28,46 @@ def text_to_msg(text: dict[str, str]) -> dict[str, str]:
         return {"text": text["content"]}
 
 
-def get_chat_data() -> Dataset:
+def tokenize_fun(sample):
+    return tokenizer(
+        # FIXIT: text is a magic string
+        sample["text"],
+        truncation=True,
+        max_length=BLOCK_SIZE,
+        return_special_tokens_mask=True,
+    )
+
+
+def tokenize(ds):
+    tokenized = ds.map(
+        tokenize_fun,
+        batched=True,
+        remove_columns=ds.column_names,
+    )
+    return tokenized
+
+
+def group_texts(samples):
+    concatenated = {k: sum(samples[k], []) for k in samples.keys()}
+    total_length = (len(concatenated["input_ids"]) // BLOCK_SIZE) * BLOCK_SIZE
+    grouped = {
+        k: [t[i : i + BLOCK_SIZE] for i in range(0, total_length, BLOCK_SIZE)]
+        for k, t in concatenated.items()
+    }
+    grouped["labels"] = grouped["input_ids"].copy()
+    return grouped
+
+
+def get_chat_ds() -> Dataset:
     with open(DATA_DIR / CHAT_FILE) as file:
         chat_data = json.load(file)
     res = Dataset.from_list(chat_data).map(chat_to_msg)
     return res
 
 
-def get_text_data() -> Dataset:
+def get_text_ds() -> Dataset:
     with open(DATA_DIR / TEXT_FILE) as file:
         text_data = json.load(file)
+    text_data = [{"content": s["content"]} for s in text_data]
     res = Dataset.from_list(text_data).map(text_to_msg)
     return res
