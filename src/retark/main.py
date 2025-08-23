@@ -13,13 +13,13 @@ def main():
     )
 
     dapt_trainer = dapt(model, text_data, group=GROUP_DS)
-    dapt_trainer.save_model("./dapt_out")
+    dapt_trainer.save_model("./out/dapt_out")
     
     chat_data = get_chat_ds()
-    model = AutoModelForCausalLM.from_pretrained("./dapt_out")
+    model = AutoModelForCausalLM.from_pretrained("./out/dapt_out")
     
     sft_trainer = sft(model, chat_data)
-    sft_trainer.save_model("./sft_out")
+    sft_trainer.save_model("./out/sft_out")
 
 
 if __name__ == "__main__":
