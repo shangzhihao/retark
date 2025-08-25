@@ -2,7 +2,7 @@ from transformers import PreTrainedModel
 from trl import SFTConfig, SFTTrainer
 from datasets import Dataset
 from .data_utils import tokenizer
-def sft(model: PreTrainedModel, chat_data: Dataset):
+def sft(model: PreTrainedModel, chat_data: Dataset)->SFTTrainer:
 
     peft_model = model
     train_cfg = SFTConfig(
