@@ -28,7 +28,7 @@ def dapt(model: PreTrainedModel, text_data: Dataset, group=False) -> Trainer:
 
     training_args = TrainingArguments(
         # FIXIT: remove hard coding
-        output_dir="out_dapt",
+        output_dir="./out/dapt-lora-text",
         per_device_train_batch_size=8,
         gradient_accumulation_steps=2,
         learning_rate=1e-4,
@@ -43,7 +43,7 @@ def dapt(model: PreTrainedModel, text_data: Dataset, group=False) -> Trainer:
         model=peft_model,
         args=training_args,
         train_dataset=train_ds,
-        # processing_class=tokenizer,
+        processing_class=tokenizer,
         data_collator=data_collator,
     )
     trainer.train()

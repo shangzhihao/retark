@@ -23,7 +23,7 @@ def tmp_data_dir(tmp_path, monkeypatch):
     return data_dir
 
 
-def test_get_chat_data(tmp_data_dir):
+def test_get_chat_ds(tmp_data_dir):
     # Prepare minimal chat-style JSON (list of {instruction, output})
     chat_payload = [
         {"instruction": "只剩一个心脏了还能活吗？", "output": "能，人本来就只有一个心脏。"},
@@ -34,7 +34,7 @@ def test_get_chat_data(tmp_data_dir):
     chat_file = tmp_data_dir / du.CHAT_FILE
     chat_file.write_text(json.dumps(chat_payload, ensure_ascii=False), encoding="utf-8")
 
-    ds = du.get_chat_data()
+    ds = du.get_chat_ds()
 
     # Basic shape check
     assert len(ds) == 2
@@ -48,7 +48,7 @@ def test_get_chat_data(tmp_data_dir):
     assert first[2]["role"] == "assistant" and first[2]["content"] == chat_payload[0]["output"]
 
 
-def test_get_text_data(tmp_data_dir):
+def test_get_text_ds(tmp_data_dir):
     # Prepare numbered text items (list of {content})
     text_payload = [
         {"content": "1. First text"},
@@ -60,7 +60,7 @@ def test_get_text_data(tmp_data_dir):
     text_file = tmp_data_dir / du.TEXT_FILE
     text_file.write_text(json.dumps(text_payload, ensure_ascii=False), encoding="utf-8")
 
-    ds = du.get_text_data()
+    ds = du.get_text_ds()
 
     # Should extract the text part (after the leading number+separator)
     got = ds["text"]

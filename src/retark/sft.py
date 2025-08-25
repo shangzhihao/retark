@@ -1,13 +1,12 @@
 from transformers import PreTrainedModel
 from trl import SFTConfig, SFTTrainer
 from datasets import Dataset
-from .config import LORA_R
-
-def sft(model: PreTrainedModel, chat_data: Dataset):
+from .data_utils import tokenizer
+def sft(model: PreTrainedModel, chat_data: Dataset)->SFTTrainer:
 
     peft_model = model
     train_cfg = SFTConfig(
-        output_dir="./sft-qwen2.5-lora-chat",
+        output_dir="./out/sft-lora-chat",
         num_train_epochs=10,
         per_device_train_batch_size=1,
         gradient_accumulation_steps=8,
@@ -27,6 +26,7 @@ def sft(model: PreTrainedModel, chat_data: Dataset):
         model=peft_model,
         train_dataset=chat_data,
         args=train_cfg,
+        processing_class=tokenizer,
     )
 
     trainer.train()

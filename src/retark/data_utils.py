@@ -1,8 +1,9 @@
 import json
 import re
+from typing import Any, Dict, List, Union
 
 from datasets import Dataset
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, BatchEncoding, PreTrainedTokenizerBase
 
 from .config import (BLOCK_SIZE, CHAT_FILE, DATA_DIR, HF_TOKEN, MODEL_NAME,
                      TEXT_FILE)
@@ -11,7 +12,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     MODEL_NAME, use_fast=True, token=HF_TOKEN)
 
 
-def chat_to_msg(chat: dict[str, str]) -> dict[str, list]:
+def chat_to_msg(chat: Dict[str, str]) -> Dict[str, List[Dict[str, str]]]:
     return {
         "messages": [
             {"role": "system", "content": "你是模仿弱智吧语气的中文助手。"},
@@ -21,7 +22,7 @@ def chat_to_msg(chat: dict[str, str]) -> dict[str, list]:
     }
 
 
-def text_to_msg(text: dict[str, str]) -> dict[str, str]:
+def text_to_msg(text: Dict[str, str]) -> Dict[str, str]:
     pattern = re.compile(r"^\s*\d{1,3}[\.,、 ]\s*(.*)$")
     m = pattern.match(text["content"])
     if m:
@@ -30,7 +31,7 @@ def text_to_msg(text: dict[str, str]) -> dict[str, str]:
         return {"text": text["content"]}
 
 
-def tokenize_fun(sample):
+def tokenize_fun(sample: Dict[str, Union[str, List[str]]]) -> BatchEncoding:
     return tokenizer(
         # FIXIT: text is a magic string
         sample["text"],
@@ -40,7 +41,7 @@ def tokenize_fun(sample):
     )
 
 
-def tokenize(ds):
+def tokenize(ds: Dataset) -> Dataset:
     tokenized = ds.map(
         tokenize_fun,
         batched=True,
@@ -49,7 +50,7 @@ def tokenize(ds):
     return tokenized
 
 
-def group_texts(samples):
+def group_texts(samples: Dict[str, List[List[int]]]) -> Dict[str, List[List[int]]]:
     concatenated = {k: sum(samples[k], []) for k in samples.keys()}
     total_length = (len(concatenated["input_ids"]) // BLOCK_SIZE) * BLOCK_SIZE
     grouped = {
