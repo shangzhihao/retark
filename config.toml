@@ -1,0 +1,25 @@
+# retark Configuration File
+# This file contains configuration settings for the retark project
+
+[data]
+# Dataset file names
+text_file = "post_mini.json"
+chat_file = "qa_mini.json"
+
+[model]
+# Model configuration
+name = "Qwen/Qwen3-0.6B-Base"
+block_size = 256
+
+[dataset]
+# Dataset processing options
+group_ds = false
+
+[lora]
+# LoRA (Low-Rank Adaptation) configuration
+r = 4
+alpha = 16
+
+[environment]
+# Environment variables and tokens
+# HF_TOKEN should be set as an environment variable
